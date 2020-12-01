@@ -10,24 +10,26 @@ namespace AdventOfCode._2020.Day01
     {
         public static void Main(string[] args)
         {
-            var file = File.OpenText(args[0]);
-            var jsonString = file.ReadToEnd();
-            var expRptList = JsonConvert.DeserializeObject<List<int>>(jsonString);
+            var expRptFile = File.OpenText(args[0]);
+            var expRptList = JsonConvert.DeserializeObject<List<int>>(expRptFile.ReadToEnd());
             var finalResult = 0;
 
-            foreach (var expense in expRptList)
-            {
-                foreach (var expRptItem in expRptList.Where(expRptItem => expRptItem != expense).Where(expRptItem => expRptItem + expense == 2020))
-                {
-                    finalResult = expRptItem * expense;
-                    break;
-                }
+            var numberOfExpenses = 2;
+            if (args[1] != null) numberOfExpenses = Convert.ToInt32(args[1]);
 
-                if (finalResult != 0) break;
+            while (finalResult == 0)
+            {
+                var items = RandomTools.PickRandom(expRptList, numberOfExpenses).ToArray();
+                if (items.Sum() != 2020) continue;
+
+                var output = 1;
+                items.ToList().ForEach(x => { output *= x; });
+
+                finalResult = output;
             }
 
             Console.WriteLine("Result: " + finalResult);
-            file.Dispose();
+            expRptFile.Dispose();
         }
     }
 }
